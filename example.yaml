@@ -25,6 +25,8 @@
 # plot_plusminus: # hours
 ## use shading to indicate day and civil/nautical/astronomical twilight - optional, defaults to true
 # show_twilight: false
+## invert shading so that night has a white background - optional, defaults to false
+# invert_twilight: true
 
 ## number of "radar" plots to produce between start and end times - optional, defaults to 9
 # Nradar: 

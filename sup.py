@@ -32,6 +32,7 @@ settings = {
     'time_zone': 'PDT',
     'plot_plusminus': 12.,
     'show_twilight': True,
+    'invert_twilight': False,
     'Nradar': 9,
     'min_alt': 30.,
     'objects': {'things': ['sun', 'moon']},
@@ -152,10 +153,16 @@ thispath: path to catalogs included with this distribution, if needed
 
     fig,ax = plt.subplots(1, 1, figsize=[10,5.5]);
     if settings['show_twilight']:
-        ax.fill_between(ptimes, 0, 90, sun_alt>-18, color=(0.9,)*3);
-        ax.fill_between(ptimes, 0, 90, sun_alt>-12, color=(0.8,)*3);
-        ax.fill_between(ptimes, 0, 90, sun_alt>-6, color=(0.7,)*3);
-        ax.fill_between(ptimes, 0, 90, sun_alt>0, color=(0.6,)*3);
+        if settings['invert_twilight']:
+            ax.fill_between(ptimes, 0, 90, sun_alt>-18, color=(0.9,)*3);
+            ax.fill_between(ptimes, 0, 90, sun_alt>-12, color=(0.8,)*3);
+            ax.fill_between(ptimes, 0, 90, sun_alt>-6, color=(0.7,)*3);
+            ax.fill_between(ptimes, 0, 90, sun_alt>0, color=(0.6,)*3);
+        else:
+            ax.fill_between(ptimes, 0, 90, sun_alt<0, color=(0.8,)*3);
+            ax.fill_between(ptimes, 0, 90, sun_alt<-6, color=(0.6,)*3);
+            ax.fill_between(ptimes, 0, 90, sun_alt<-12, color=(0.4,)*3);
+            ax.fill_between(ptimes, 0, 90, sun_alt<-18, color=(0.0,)*3);
     for objtype in objects.keys():
         for o in objects[objtype]:
             ax.plot(ptimes, o['alt'], **styles[objtype]);
