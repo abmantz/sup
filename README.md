@@ -7,6 +7,8 @@ How about no.
 
 Simple script for plotting altitude and azimuth vs time of various celestial things from a given location. Sure, there are probably prettier and more complete tools out there. Who cares.
 
+**Requires:** astropy, matplotlib, numpy
+
 ### Settings
 
 See [example.yaml](example.yaml).
