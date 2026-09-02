@@ -1,0 +1,58 @@
+## example settings file
+
+## location - optional, defaults to SSO
+## enter the name of an observatory given in a built-in list, or coordinates
+# location: SSO
+## OR
+# location:
+#   longitude: # deg E
+#   latitude: # deg N
+#   elevation: # meters
+
+## time - optional, defaults to now
+## given a single time, searches +/- 12 hours for midnight at location above; plots are then for that time +/- plot_plusminus
+## alternatively, specify a start and end time
+## either way, specified times are interpreted according to time_zone
+# time: 2026-09-02T07:00:00
+## OR
+# time:
+#   begin: 2026-09-01T19:00:00
+#   end:   2026-09-02T07:00:00
+
+## time zone for specified time(s) above, as well as for plot output - optional, defaults to PDT
+# time_zone: UTC
+## see time, above - optial, defaults to 12
+# plot_plusminus: # hours
+## use shading to indicate day and civil/nautical/astronomical twilight - optional, defaults to true
+# show_twilight: false
+
+## number of "radar" plots to produce between start and end times - optional, defaults to 9
+# Nradar: 
+## minimum altitude angle to show in radar plots - optional, defaults to 30
+# min_alt: # deg
+
+## objects
+## entries (object types) should be strings or lists of either dictionaries or strings
+## A string object type is interpreted as the name of a yaml file to import (providing a listm as below) and optionally
+##   the names of entries that should be selected from that list, with the rest discarded (and all included by default).
+## Individual object dictionaries should provide ra and dec in decimal degrees (currently) and a name.
+## Individual object strings must name a body whose position can be provided by astropy.coordinates.get_body()
+objects:
+# goodClusters: messier_openclusters.yaml M11 M26 M29 M39
+  openClusters: messier_openclusters.yaml
+# someType:
+#  - name: something
+#    ra: 0.0
+#    dec: 0.0
+  avoid:
+  - sun
+  - moon
+## objects is also optional, defaulting to sun, moon and some planets
+
+## styles
+## Optionally, provide dictionaries of options to be passed to matplotlib.
+## Default is to color each object type differently, with C0, C1, ...
+## Not tested with any options other than color.
+# styles:
+#   openClusters:
+#     color: b
