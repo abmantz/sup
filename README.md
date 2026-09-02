@@ -24,3 +24,7 @@ Usage: sup.py
 ### Python interface
 
 See [example.ipynb](example.ipynb).
+
+### Acknowledgements
+
+The Messier subcatalogs packaged here are derived from data maintained by [seds.org](http://www.messier.seds.org/) ([usage](http://www.messier.seds.org/usage.html)).
