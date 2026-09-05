@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
+import argparse
 import datetime
-from os.path import dirname, exists
+from os.path import dirname, exists, realpath
 from sys import argv
 import yaml
 
@@ -28,7 +29,7 @@ known_timezones = {
 
 settings = {
     'location': 'SSO',
-    'time': None,
+    'time': "now",
     'time_zone': 'PDT',
     'plot_plusminus': 12.,
     'show_twilight': True,
@@ -38,9 +39,26 @@ settings = {
     'objects': {'things': ['sun', 'moon']},
     'styles': {}
 }
+not_cmdl = ['objects', 'styles']
+
+def boolparse(s):
+    return not ( len(s) < 1 or s[0].lower() not in ['t', 'y'] )
+
+parser = argparse.ArgumentParser(description="Find out what's up.", formatter_class=argparse.ArgumentDefaultsHelpFormatter, epilog='See example settings file for details about each option. Settings files take precedence over command line options.')
+for k in settings:
+    if k in not_cmdl:
+        continue
+    if settings[k] is None:
+        t = str
+    elif settings[k].__class__ == bool:
+        t = boolparse
+    else:
+        t = settings[k].__class__
+    parser.add_argument('--'+k, default=settings[k], required=False, type=t, help='#')
+parser.add_argument('setfile', default=[], nargs='*', help='E.g. <settings.yaml> or <catalog.yaml [ specific object(s) ]>')
 
 
-    
+
 
 
 def sup(settings=settings, setfile=None, thispath=""):
@@ -76,8 +94,10 @@ thispath: path to catalogs included with this distribution, if needed
         tzone *= u.h
 
     time = settings['time']
-    if time is None:
+    if time is None or time == "" or time == "now":
         time = (Time.now() + tzone).datetime # NOW in UTC converted to local
+    if time.__class__ == str:
+        time = Time(time).datetime
     if time.__class__ == datetime.datetime:
         time = Time(time) - tzone # to UTC
         times = (time - 12*u.h) + np.linspace(0., 1., 36)*u.day
@@ -95,7 +115,7 @@ thispath: path to catalogs included with this distribution, if needed
     for objtype in objects.keys():
         if objects[objtype].__class__ == str:
             words = objects[objtype].split()
-            fname = words[0]+'.yaml'
+            fname = words[0].removesuffix('.yaml')+'.yaml'
             if not exists(fname):
                 fname = thispath + '/' + fname
             if not exists(fname):
@@ -203,14 +223,15 @@ thispath: path to catalogs included with this distribution, if needed
 
 
 
-def main(argv):
+def main(argv, settings):
     argc = len(argv)
 
-    thispath = dirname(argv[0])
+    thispath = dirname(realpath(argv[0]))
 
     setfile = None
     if argc > 1:
         if argv[1] == '-h':
+            # will never get here now that we're using argparse!
             print("Usage: " + argv[0] )
             print("       " + argv[0] + " -h")
             print("       " + argv[0] + " <settings.yaml>")
@@ -222,4 +243,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(argv)
+    args = parser.parse_args()
+    cmdl = {k:args.__getattribute__(k) for k in settings if not k in not_cmdl}
+    settings.update(cmdl)
+    main(argv[:1]+args.setfile, settings)
