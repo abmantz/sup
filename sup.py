@@ -37,7 +37,8 @@ settings = {
     'Nradar': 9,
     'min_alt': 30.,
     'objects': {'things': ['sun', 'moon']},
-    'styles': {}
+    'styles': {},
+    'outprefix': None
 }
 not_cmdl = ['objects', 'styles']
 
@@ -81,6 +82,8 @@ thispath: path to catalogs included with this distribution, if needed
                 'targets': setfile,
                 'avoid': ['sun', 'moon']
                 }
+
+    outpre = settings['outprefix']
 
     loc = settings['location']
     if loc.__class__ == str:
@@ -154,6 +157,30 @@ thispath: path to catalogs included with this distribution, if needed
             s = '+'+s
         return "Time (UTC" + s + ")"
 
+    def linroot(x1, x2, y1, y2):
+        a = y1
+        b = (y2-y1) / (x2-x1)
+        return x1 - a/b
+    def report_sunstuff(times, tzone, el):
+        print(tzonelab(tzone))
+        for i in range(1, len(times)):
+            if el[i-1] >= 0 and el[i] <= 0:
+                print("Sunset:", linroot(times[i-1], times[i], el[i-1], el[i]) + tzone)
+            elif el[i-1] >= -6 and el[i] <= -6:
+                print("End of civil twilight:", linroot(times[i-1], times[i], el[i-1]+6, el[i]+6) + tzone)
+            elif el[i-1] >= -12 and el[i] <= -12:
+                print("End of nautical twilight:", linroot(times[i-1], times[i], el[i-1]+12, el[i]+12) + tzone)
+            elif el[i-1] >= -18 and el[i] <= -18:
+                print("End of astronomical twilight:", linroot(times[i-1], times[i], el[i-1]+18, el[i]+18) + tzone)
+            elif el[i-1] <= -18 and el[i] >= -18:
+                print("Start of astronomical twilight:", linroot(times[i-1], times[i], el[i-1]+18, el[i]+18) + tzone)
+            elif el[i-1] <= -12 and el[i] >= -12:
+                print("Start of nautical twilight:", linroot(times[i-1], times[i], el[i-1]+12, el[i]+12) + tzone)
+            elif el[i-1] <= -6 and el[i] >= -6:
+                print("Start of civil twilight:", linroot(times[i-1], times[i], el[i-1]+6, el[i]+6) + tzone)
+            elif el[i-1] <= 0 and el[i] >= 0:
+                print("Sunrise:", linroot(times[i-1], times[i], el[i-1], el[i]) + tzone)
+
 
     times = tstart + (tstop - tstart) * np.linspace(0., 1., 101)
     ptimes = plottimes(times, tzone)
@@ -170,6 +197,8 @@ thispath: path to catalogs included with this distribution, if needed
                     o['alt'][i] = o['coords'].transform_to(altaz).alt.value
                 else:
                     o['alt'][i] = get_body(o['name'], t, loc).transform_to(altaz).alt.value
+
+    report_sunstuff(times, tzone, sun_alt)
 
     fig,ax = plt.subplots(1, 1, figsize=[10,5.5]);
     if settings['show_twilight']:
@@ -192,7 +221,8 @@ thispath: path to catalogs included with this distribution, if needed
     ax.set_xlabel(tzonelab(tzone));
     ax.set_ylabel('Altitude (deg)');
     ax.set_ylim(0, 90);
-
+    if outpre is not None:
+        fig.savefig(outpre+'_alt.png')
 
 
     minalt = settings['min_alt']
@@ -217,9 +247,11 @@ thispath: path to catalogs included with this distribution, if needed
                 if c.alt.value > minalt:
                     ax.scatter(c.az/180.*np.pi, c.alt, **styles[objtype])
                     ax.text(c.az.value/180.*np.pi, c.alt.value, o['name'], ha='center', va='bottom')
+    if outpre is not None:
+        fig.savefig(outpre+'_radar.png')
 
-
-    plt.show(block=True);
+    else:
+        plt.show(block=True);
 
 
 

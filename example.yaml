@@ -58,3 +58,7 @@ objects:
 # styles:
 #   openClusters:
 #     color: b
+
+## Provide a prefix for output images, <prefix>_alt.png and <prefix>_radar.png
+## Default is to display them to the screen instead of writing them
+# outprefix: outfile
