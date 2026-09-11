@@ -1,0 +1,16 @@
+- name: M27
+  ra: 299.9
+  dec: 22.7167
+  mag: 7.4
+- name: M57
+  ra: 283.4
+  dec: 33.0333
+  mag: 8.8
+- name: M76
+  ra: 25.6
+  dec: 51.5667
+  mag: 10.1
+- name: M97
+  ra: 168.7
+  dec: 55.0167
+  mag: 9.9
