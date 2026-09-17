@@ -14,10 +14,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 known_observatories = {
+    'LCO': {
+        'lat': '-29d00m51.12s',
+        'lon': '-70d41m33.00s',
+        'height': 2282*u.m
+    },
     'SSO': {
         'lat': 37.419167*u.deg,
         'lon': -122.181667*u.deg,
         'height': 30*u.m
+    },
+    'VLA': {
+        'lat': '34d04m43s',
+        'lon': '-107d37m04s',
+        'height': 209*u.m
     }
 }
 
@@ -146,6 +156,8 @@ thispath: path to catalogs included with this distribution, if needed
         if not 'color' in styles[objtype]:
             styles[objtype]['color'] = 'C'+str(i)
 
+    minalt = settings['min_alt']
+
 
 
     def plottimes(ts, zone):
@@ -221,11 +233,14 @@ thispath: path to catalogs included with this distribution, if needed
     ax.set_xlabel(tzonelab(tzone));
     ax.set_ylabel('Altitude (deg)');
     ax.set_ylim(0, 90);
+    if settings['show_twilight'] and not settings['invert_twilight']:
+        ax.axhline(minalt, ls='--', color='w');
+    else:
+        ax.axhline(minalt, ls='--', color='k');
     if outpre is not None:
         fig.savefig(outpre+'_alt.png')
 
 
-    minalt = settings['min_alt']
     Nradar = settings['Nradar']
     times = tstart + (tstop - tstart) * np.linspace(0., 1., Nradar)
     ncol = 3

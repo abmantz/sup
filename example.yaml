@@ -49,7 +49,7 @@ objects:
   avoid:
   - sun
   - moon
-## objects is also optional, defaulting to sun, moon and some planets
+## objects is also optional, defaulting to sun and moon
 
 ## styles
 ## Optionally, provide dictionaries of options to be passed to matplotlib.
