@@ -94,6 +94,8 @@ thispath: path to catalogs included with this distribution, if needed
                 }
 
     outpre = settings['outprefix']
+    if outpre is not None:
+        outpre = str(outpre)
 
     loc = settings['location']
     if loc.__class__ == str:
